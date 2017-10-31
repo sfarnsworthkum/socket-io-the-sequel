@@ -15,6 +15,7 @@ io.on('connection', function(socket) {
     console.log(data);
   });
 });
+io.sockets.emit('user entry', 'Welcome!');
 
 http.listen(3000, function() {
   console.log('listening on localhost:3000');
