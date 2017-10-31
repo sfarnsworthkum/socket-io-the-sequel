@@ -1,22 +1,29 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-
-app.get('/', function(req, res, next) {
-  res.sendFile(__dirname + '/views/index.html');
-});
+var express = require('express'),
+  app = express();
+app.use(express.static(__dirname + '/public'));
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
-  console.log('connection!');
+  socket.on('join', function(name) {
+    socket.username = name;
+    io.sockets.emit('addChatter', name);
+  });
 
-  io.sockets.emit('from server', 'HELLO!');
+  socket.on('messages', function(message) {
+    username = socket.username;
+    io.sockets.emit('messages', { username, message });
+  });
 
-  socket.on('from client', function(data) {
-    console.log(data);
+  socket.on('disconnect', function(name) {
+    io.sockets.emit('removeChatter', socket.username);
   });
 });
-io.sockets.emit('user entry', 'Welcome!');
 
-http.listen(3000, function() {
-  console.log('listening on localhost:3000');
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+
+server.listen(8080, function() {
+  console.log('Server started on port 8080');
 });
