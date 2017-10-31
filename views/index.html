@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>First Socket.io application</title>
+</head>
+<body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    socket.on('from server', function (data) {
+      console.log(data);
+      socket.emit('from client', 'WORLD!');
+    });
+  </script>
+</body>
+</html>
